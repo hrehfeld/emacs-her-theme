@@ -421,7 +421,11 @@
 	 (org-scheduled ((t (:inherit variable-pitch ,@ her-neutral-face))))
 	 (org-scheduled-today ((t (:inherit (fixed-pitch) ,@ her-neutral-face))))
 	 (org-scheduled-previously ((t (:inherit (org-scheduled org-warning)))))
-     
+
+	 ;;git
+	 ;;(git-commit-comment-file ((t (:inherit fixed-pitch))))
+	 (git-commit-pseudo-header ((t (:inherit fixed-pitch))))
+
      )))
 
 ;;;###autoload
