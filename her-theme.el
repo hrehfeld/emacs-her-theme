@@ -52,10 +52,10 @@
 		 (bg-y (her-color-get-luminance bg))
 		 (y-diff (- bg-y fg-y))
 		 (min-legible-xyz (her-color-set-luminance fg
-                                   (if (< y-diff 0)
-                                       ;;fg is brighter
-                                       (color-clamp (+ bg-y min-contrast-y))
-                                     (color-clamp (- bg-y min-contrast-y)))))
+												   (if (< y-diff 0)
+													   ;;fg is brighter
+													   (color-clamp (+ bg-y min-contrast-y))
+													 (color-clamp (- bg-y min-contrast-y)))))
 		 ;;(darkest-rgb (mapcar 'color-clamp unclamped))
 		 ;;(hex (apply 'color-rgb-to-hex darkest-rgb))
 		 )
@@ -66,22 +66,24 @@
 (setq her-fg "#000000")
 (setq her-bg "#ffffff")
 (setq her-num-bg-shades 8)
-(setq her-shade-steps 3
-      her-shade-sat-mul 0.9
+(setq her-num-lightness-steps 5
+      her-shade-sat-steps 5
+      her-shade-lightness-sat-mul 1.0
       her-shade-sat-mul-step 0.7
-      her-shade-sat-steps 4
       )
 
 ;;for faces that should not deviate too much from standard
 ;; be careful with these, they're against the point of everything above
 
 (setq her-colors
-      (let ((s 0.9)
+	  ;;max saturated
+      (let ((s 0.7)
+			;;avg lightness
             (l 0.4))
-          (mapcar
-           (lambda (h) (apply 'color-rgb-to-hex (color-hsl-to-rgb h s l)))
-           (mapcar (lambda (h) (/ h 360.0)) (number-sequence -5 350 45))
-           )))
+		(mapcar
+		 (lambda (h) (apply 'color-rgb-to-hex (color-hsl-to-rgb h s l)))
+		 (mapcar (lambda (h) (/ h 360.0)) (number-sequence -5 350 45))
+		 )))
 
 (setq her-red 0)
 (setq her-yellow 1)
@@ -102,17 +104,17 @@
                        her-red
                        her-yellow
                        ))
-;(setq her-colors (mapcar (lambda (i) (nth i her-colors)) her-color-names))
-;(setq her-colors (mapcar (lambda (i) (nth i her-colors)) (number-sequence 0 (- (length her-color-names) 1))))
+										;(setq her-colors (mapcar (lambda (i) (nth i her-colors)) her-color-names))
+										;(setq her-colors (mapcar (lambda (i) (nth i her-colors)) (number-sequence 0 (- (length her-color-names) 1))))
 
-;(setq her-red (-elem-index her-red her-color-names))
-;(setq her-yellow (-elem-index her-yellow her-color-names))
-;(setq her-lightgreen (-elem-index her-lightgreen her-color-names))
-;(setq her-green (-elem-index her-green her-color-names))
-;(setq her-cyan (-elem-index her-cyan her-color-names))
-;(setq her-blue (-elem-index her-blue her-color-names))
-;(setq her-purple (-elem-index her-purple her-color-names))
-;(setq her-pink (-elem-index her-pink her-color-names))
+										;(setq her-red (-elem-index her-red her-color-names))
+										;(setq her-yellow (-elem-index her-yellow her-color-names))
+										;(setq her-lightgreen (-elem-index her-lightgreen her-color-names))
+										;(setq her-green (-elem-index her-green her-color-names))
+										;(setq her-cyan (-elem-index her-cyan her-color-names))
+										;(setq her-blue (-elem-index her-blue her-color-names))
+										;(setq her-purple (-elem-index her-purple her-color-names))
+										;(setq her-pink (-elem-index her-pink her-color-names))
 
 
 ;;special color names
@@ -129,20 +131,63 @@
  her-success her-green
  her-warning her-yellow
  her-neutral her-blue
-      )
+ )
 
 
+(defun her--min-diff (x a b)
+  (min (abs (- x a))
+	   (abs (- x b))))
 
+(defun her--number-sequence-n (from to n)
+  (let* ((n1 (- n 1))
+		(stepsize (/ (- to from) n)))
+	(mapcar (lambda (i) (+ from  (* i stepsize))) (number-sequence 0 n1))))
 
+;;(her--number-sequence-n 0.1 0.5 2)
+;;(her--number-sequence-n 1.0 2.25  2)
 
+(defun her--color-saturation-mul (hsl sat-mul)
+  (list (nth 0 hsl)
+		(color-clamp (* (nth 1 hsl) sat-mul))
+		(nth 2 hsl)))
 
+(defun her--color-saturation-variants (base-sat shades)
+  (let* ((s-minmax (list (/ 1.0 her-shade-sat-steps) 1.0))
 
+		 (num-more-steps (round (* 0.5 (- her-shade-sat-steps 1))))
+		 (num-less-steps (- her-shade-sat-steps 1 num-more-steps))
+		 (num-steps (list num-less-steps num-more-steps))
+		 
+		 (s-ratios (mapcar (lambda (m) (/ m base-sat)) s-minmax))
+		 ;(s-diffs (mapcar (lambda (m) (- m base-sat)) s-minmax))
+		 (s-stepsize (map-apply (lambda (s n)
+								  (/ s n
+									 ))
+								(-zip  s-ratios num-steps)))
+		 (steps (append (her--number-sequence-n (first s-ratios) 1.0 num-less-steps)
+						(list 1.0)
+						(reverse
+						 (her--number-sequence-n (nth 1 s-ratios) 1.0 num-more-steps))))
+		 )
+	;;reduce saturation for all shades
+	(mapcar (lambda (sat-mul)
+			  (mapcar
+			   (lambda (hsl) (her--color-saturation-mul hsl sat-mul))
+			   shades))
+			steps)))
+;;(her--color-saturation-variants 0.4 '((0.19999999999999998 0.054901960784313725 0.07712418300653595) (0.39999999999999997 0.10980392156862745 0.1542483660130719) (0.6 0.16470588235294117 0.23137254901960785) (0.7333333333333333 0.44313725490196076 0.4875816993464052) (0.8666666666666666 0.7215686274509804 0.7437908496732026)))
+
+(defun her--map-apply-call (f l)
+  (mapcar (lambda (c) (apply f c)) l))
 
 (let* (
        (fg (color-name-to-rgb her-fg))
        (bg (color-name-to-rgb her-bg))
+	   (hsl-fg (apply 'color-rgb-to-hsl fg))
+	   (hsl-bg (apply 'color-rgb-to-hsl bg))
 
        (fg-bg-shades-rgb (color-gradient fg bg her-num-bg-shades))
+
        )
   (setq her-fg-bg-shades (append (list her-fg)
                                  (mapcar
@@ -154,75 +199,81 @@
   (setq her-color-shades
         (mapcar
          (lambda (hex)
-           (mapcar (lambda (isat)
-                     (let* ((rgb (color-name-to-rgb hex))
-                            (min-y-diff (min (abs (her-color-luminance-diff rgb fg))
-                                             (abs (her-color-luminance-diff rgb bg))
-                                             ))
-                            (hsl (apply 'color-rgb-to-hsl rgb))
-                            (y (nth 2 hsl))
-                            (darkest-y (- y min-y-diff))
-                            (lightest-y (+ y min-y-diff))
-                            (sat (nth 1 hsl)) 
-                            (darkest (color-hsl-to-rgb
-                                      (nth 0 hsl)
-                                      (* sat her-shade-sat-mul)
-                                      darkest-y))
-                            (lightest (color-hsl-to-rgb
-                                       (nth 0 hsl)
-                                       (* sat (1+ (1- her-shade-sat-mul)))
-                                       lightest-y))
-                            (l (append (color-gradient darkest rgb her-shade-steps)
-                                       (list rgb)
-                                       (color-gradient rgb lightest her-shade-steps)
-                                       ))
-                            (sat-mul (* isat (/ sat (1+ her-shade-sat-steps))))
-                            (l (mapcar
-                                (lambda (c)
-                                  (let* ((hsl (apply 'color-rgb-to-hsl c))
-                                         (hsl (list (nth 0 hsl)
-                                                    (color-clamp (- (nth 1 hsl) sat-mul))
-                                                    (nth 2 hsl))))
-                                    (apply 'color-hsl-to-rgb hsl)))
-                                l)))
-                            (mapcar
-                             (lambda (c)
-                               (apply 'color-rgb-to-hex c))
-                             (if (< y 0.5)
-                                 l
-                               (reverse l)))))
-                   (number-sequence 0 her-shade-sat-steps)))
+		   (let* ((rgb (color-name-to-rgb hex))
+				  (hsl (apply 'color-rgb-to-hsl rgb))
+
+				  (lightness-diff (apply 'her--min-diff
+										 (mapcar (lambda (c) (nth 2 c)) (list hsl hsl-bg hsl-fg))))
+				  (sat (nth 1 hsl)) 
+				  (lightness (nth 2 hsl))
+				  ;;(darkest-y (- lightness lightness-diff))
+				  ;;(lightest-y (+ lightness lightness-diff))
+				  (fg-l (nth 2 hsl-fg))
+				  (bg-l (nth 2 hsl-bg))
+				  (darkest-y (min fg-l bg-l))
+				  (lightest-y (max fg-l bg-l))
+
+
+				  ;;darkest and lightness receive saturation multipliers
+				  (darkest (color-hsl-to-rgb
+							(nth 0 hsl)
+							(color-clamp (* sat her-shade-lightness-sat-mul))
+							darkest-y))
+				  (lightest (color-hsl-to-rgb
+							 (nth 0 hsl)
+							 (color-clamp (* sat (1+ (1- her-shade-lightness-sat-mul))))
+							 lightest-y))
+				  (shades (append (color-gradient darkest rgb (/ her-num-lightness-steps 2))
+							 (list rgb)
+							 (color-gradient rgb lightest (/ (- her-num-lightness-steps 1) 2))
+							 )))
+			 (let* ((hsl-shades (her--map-apply-call 'color-rgb-to-hsl shades))
+					(hsl-desaturated-shades (her--color-saturation-variants sat hsl-shades)))
+			   (mapcar
+				(lambda (l)
+				  (let ((rgbl (her--map-apply-call 'color-hsl-to-rgb l)))
+					(her--map-apply-call 'color-rgb-to-hex rgbl)
+					))
+				hsl-desaturated-shades))
+			 ))
          her-colors))
+
   )
 
 (defun her-safe-nth (i l)
   (let ((i (min i (- (length l) 1))))
     (nth i l)))
 
-(defun her-color-shade (shades isat ival)
-  (let* ((isat (- 0 isat))
-         (ival (+ her-shade-steps ival)))
-    (her-safe-nth ival (nth isat shades))))
+(defun her-color-shade (shades isat_ ival_)
+  (let* ((isat (+  (/ her-shade-sat-steps 2) isat_))
+		 (ival (+ (/ her-num-lightness-steps 2) ival_))
+		 (col (nth ival (nth isat shades))))
+	(unless col (user-error "Wrong color index: %s %s" isat_ ival_))
+	col
+	))
+
+;;(her-color-shade (nth 0 her-color-shades) 0 0)
+;;(her-safe-nth 0 (nth 0 (nth her-num-lightness-steps her-color-shades)))
 
 (defun her-fg (&optional i)
-  (let ((i (- (if i i 0))))
+  (let ((i (- (or i 0))))
     (her-safe-nth i her-fg-bg-shades)))
 
-;(her-fg -2)
-;(her-bg 2)
+										;(her-fg -2)
+										;(her-bg 2)
 
 (defun her-bg (&optional i)
-  (let* ((i (- (if i i 0)))
+  (let* ((i (- (or i 0)))
          (j (- (length her-fg-bg-shades) 1 i)))
     (her-safe-nth j her-fg-bg-shades)))
 
-;;(her-color)
 
 
 (defun her-color (c &optional isat ival)
-  (let ((isat (if isat isat 0))
-        (ival (if ival ival 0)))
+  (let ((isat (or isat 0))
+        (ival (or ival 0)))
     (her-color-shade (nth c her-color-shades) isat ival)))
+;;(her-color her-blue 1 1)
 
 (defun her-bg-for (c)
   (let* ((hsl (apply 'color-rgb-to-hsl (color-name-to-rgb c)))
@@ -240,17 +291,19 @@
       dark
       )))
 
-;;(her-color her-secondary 1)
+;;(her-color her-secondary 4)
 
-(defun her-red (&rest rest) (apply 'her-color (append (list her-red) rest)))
-(defun her-yellow (&rest rest) (apply 'her-color (append (list her-yellow) rest)))
-(defun her-lightgreen (&rest rest) (apply 'her-color (append (list her-lightgreen) rest)))
-(defun her-green (&rest rest) (apply 'her-color (append (list her-green) rest)))
-(defun her-cyan (&rest rest) (apply 'her-color (append (list her-cyan) rest)))
-(defun her-blue (&rest rest) (apply 'her-color (append (list her-blue) rest)))
-(defun her-purple (&rest rest) (apply 'her-color (append (list her-purple) rest)))
-(defun her-pink (&rest rest) (apply 'her-color (append (list her-pink) rest)))
-
+(defmacro her--defun-color (name)
+  `(defun ,name (&rest rest) (apply 'her-color (append (list ,name) rest))))
+(her--defun-color her-red)
+(her--defun-color her-yellow)
+(her--defun-color her-lightgreen)
+(her--defun-color her-green)
+(her--defun-color her-cyan)
+(her--defun-color her-blue)
+(her--defun-color her-purple)
+(her--defun-color her-pink)
+;;(her-blue 0 0)
 
 (defvar her-reference-body-size 13)
 (defun her-font-size (n) (/ n (float her-reference-body-size)))
@@ -274,11 +327,12 @@
      (minibuffer-prompt ((t (:inherit default ;:foreground ,(her-color her-contrast 0 0)
                                       ))))
      
-     (mode-line ((t (:inherit default :background ,(her-color her-primary -2) :inverse-video nil))))
+     (mode-line ((t (:inherit default :background ,(her-color her-primary) :inverse-video nil))))
      (mode-line-highlight ((t (:inherit mode-line :weight bold))))
-     (mode-line-emphasis ((t (:inherit mode-line :background ,(her-color her-primary -2 1) :slant italic))))
+     (mode-line-emphasis ((t (:inherit mode-line :background ,(her-color her-primary 0 1
+																		 ) :slant italic))))
      (mode-line-inactive ((t (:inherit mode-line
-                                        :background ,(her-color her-primary -3 4)))))
+									   :background ,(her-color her-primary -1 2)))))
      (mode-line-buffer-id ((t (:weight bold :background nil))))
      (which-func ((t (:inherit mode-line-highlight :inverse-video t :foreground ,(her-bg)))))
      (window-numbering-face ((t (:inherit mode-line-highlight :inverse-video t :box t :foreground ,(her-bg)))))
@@ -290,7 +344,7 @@
      ;;      `(mode-line-mode-name ((t (:foreground ,theme-contrast))))
      ;;      `(mode-line-mode-string ((t (:foreground ,theme-contrast))))
 
-     (region ((t ,(let ((col (her-color her-contrast-large -3 3)))
+     (region ((t ,(let ((col (her-color her-contrast-large -2 2)))
                     `(:background ,col :distant-foreground ,(her-bg-for col))))))
      ;;      `(secondary-selection ((t (:background ,theme-bg-less1))))
 
@@ -316,35 +370,35 @@
      ;;border
      (vertical-border ((t (:foreground ,(her-bg -2)))))
      (fringe ((t (:inverse-video nil :background ,(her-bg)))))
-     ;(lv-separator ((t(:background ,(her-red)))))
+										;(lv-separator ((t(:background ,(her-red)))))
      ,(let* ((bg (her-color her-primary))
-            (fg (her-bg-for bg)))
-       `(header-line ((t (:inherit variable-pitch
-                                   :foreground ,fg :background ,bg
-                                   :box (:line-width 5 :color ,bg))))))
+			 (fg (her-bg-for bg)))
+		`(header-line ((t (:inherit variable-pitch
+									:foreground ,fg :background ,bg
+									:box (:line-width 5 :color ,bg))))))
      (highlight ((t (:inverse-video t :foreground ,(her-color her-contrast)
-                                    ;:distant-foreground ,(her-bg-for (her-color her-secondary))
+										;:distant-foreground ,(her-bg-for (her-color her-secondary))
                                     ))))
      (success ((t (:foreground ,(her-color her-success)))))
      (warning ((t (:foreground ,(her-color her-warning)))))
      (error ((t (:foreground ,(her-color her-error)))))
      ;;(table-cell ((t (:foreground ,(her-color her-success)))))
 
-     ,(let* ((bg (her-yellow -2 2))
-            (fg (her-bg-for bg)))
+     ,(let* ((bg (her-yellow 0 2))
+			 (fg (her-bg-for bg)))
         `(tool-tip ((t (:foreground ,fg :background ,bg)))))
 
      
 
      ,(let* ((bg (her-bg -1))
-            (fg (her-bg-for bg)))
-       `(hl-line ((t (:background ,bg :distant-foreground ,fg )))))
+			 (fg (her-bg-for bg)))
+		`(hl-line ((t (:background ,bg :distant-foreground ,fg )))))
 
 
      ;;      `(trailing-whitespace ((t (:underline t :foreground ,theme-red))))
-     ,(let ((col (her-color her-alternative-large -2 3)))
+     ,(let ((col (her-color her-alternative-large 0 2)))
         `(show-paren-match ((t (:background ,col :distant-foreground ,(her-bg-for col))))))
-     (show-paren-mismatch ((t (:background ,(her-red)))))
+     (show-paren-mismatch ((t (:inherit error :inverse-video t))))
 
      ;;next-error
      
@@ -354,8 +408,8 @@
 
      ;;      ;; faces used by isearch
      ,@(let ((icol her-success))
-       `((isearch ((t (:inverse-video t :foreground ,(her-color icol)))))
-         (lazy-highlight ((t (:inherit isearch :foreground ,(her-color icol -2 2)))))))
+		 `((isearch ((t (:inverse-video t :foreground ,(her-color icol)))))
+		   (lazy-highlight ((t (:inherit isearch :foreground ,(her-color icol -2 2)))))))
      (match ((t (:inverse-video t :foreground ,(her-color her-neutral -2)))))
      (isearch-fail ((t (,@her-error-face :inverse-video t))))
 
@@ -377,39 +431,39 @@
 
      ,@(let* ((outline-face `(:box (:line-width 5 :color ,(her-bg))))
               (subheading-size (her-font-size 15)))
-       `((outline-1 ((t (,@outline-face :foreground ,(her-fg) :height ,(her-font-size 24) :box (:line-width 5 :color ,(her-bg))))))
-         (outline-2 ((t (,@outline-face :foreground ,(her-color 1) :height ,subheading-size))))
-         (outline-3 ((t (,@outline-face :foreground ,(her-color 2) :height ,subheading-size))))
-         (outline-4 ((t (,@outline-face :foreground ,(her-color 3) :height ,subheading-size))))
-         (outline-5 ((t (,@outline-face :foreground ,(her-color 4) :height ,subheading-size))))
-         (outline-6 ((t (,@outline-face :foreground ,(her-color 5) :height ,subheading-size))))
-         (outline-7 ((t (,@outline-face :foreground ,(her-color 6) ))))
-         (outline-8 ((t (,@outline-face :foreground ,(her-color 7) ))))))
+		 `((outline-1 ((t (,@outline-face :foreground ,(her-fg) :height ,(her-font-size 24) :box (:line-width 5 :color ,(her-bg))))))
+		   (outline-2 ((t (,@outline-face :foreground ,(her-color 1) :height ,subheading-size))))
+		   (outline-3 ((t (,@outline-face :foreground ,(her-color 2) :height ,subheading-size))))
+		   (outline-4 ((t (,@outline-face :foreground ,(her-color 3) :height ,subheading-size))))
+		   (outline-5 ((t (,@outline-face :foreground ,(her-color 4) :height ,subheading-size))))
+		   (outline-6 ((t (,@outline-face :foreground ,(her-color 5) :height ,subheading-size))))
+		   (outline-7 ((t (,@outline-face :foreground ,(her-color 6) ))))
+		   (outline-8 ((t (,@outline-face :foreground ,(her-color 7) ))))))
      
       ;;; font lock
      (font-lock-builtin-face ((t (:foreground ,(her-pink)))))
      (font-lock-comment-face ((t (;,@theme-text-like-face
-                                   :foreground ,(her-red) :weight normal
-                                               ))))
+								  :foreground ,(her-red) :weight normal
+											  ))))
      (font-lock-comment-delimiter-face ((t (:foreground ,(her-red)))))
-     (font-lock-constant-face ((t (:foreground ,(her-cyan -2)))))
+     (font-lock-constant-face ((t (:foreground ,(her-cyan -1)))))
      (font-lock-doc-face ((t (:foreground ,(her-pink 1)))))
      (font-lock-doc-string-face ((t (:foreground ,(her-pink 2)))))
-     (font-lock-function-name-face ((t (:foreground ,(her-blue)))))
-     (font-lock-builtin-face ((t (:foreground ,(her-pink 0 2)))))
+     (font-lock-function-name-face ((t (:foreground ,(her-blue 1)))))
+     (font-lock-builtin-face ((t (:foreground ,(her-pink 1)))))
      (font-lock-keyword-face ((t (:foreground ,(her-pink 2)))))
-     (font-lock-string-face ((t (:foreground ,(her-red -2 1)))))
-     (font-lock-type-face ((t (:foreground ,(her-lightgreen 0 -1)))))
-     (font-lock-variable-name-face ((t (:foreground ,(her-yellow 0 -1)))))
+     (font-lock-string-face ((t (:foreground ,(her-red -2)))))
+     (font-lock-type-face ((t (:foreground ,(her-green 1 -1)))))
+     (font-lock-variable-name-face ((t (:foreground ,(her-yellow 1)))))
      (font-lock-warning-face ((t (;,@theme-warning-face
-                                   ,(her-yellow)))))
-     (font-lock-preprocessor-face ((t (:foreground ,(her-cyan)))))
+								  ,(her-yellow)))))
+     (font-lock-preprocessor-face ((t (:foreground ,(her-cyan 1 -1)))))
      (font-lock-negation-char-face ((t ())))
 
      ;;org-mode
 
      (org-hide ((t (:foreground ,(her-bg) :inherit fixed-pitch))))
-     (org-special-keyword ((t (:foreground ,(her-fg -4)))))
+     (org-special-keyword ((t (:foreground ,(her-fg -2)))))
      (org-table ((t (:inherit fixed-pitch :foreground ,(her-color her-contrast-text)))))
      (org-tag ((t (:inherit org-special-keyword :background ,(her-bg -1) :height ,(her-font-size 10)))))
      (org-date ((t (:inherit org-table))))
