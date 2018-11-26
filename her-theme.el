@@ -270,15 +270,22 @@
 ;;(her-color-shade (nth 0 her-color-shades) 0 0)
 ;;(her-safe-nth 0 (nth 0 (nth her-num-lightness-steps her-color-shades)))
 
+(defun her--float-fg-bg-index (i)
+  (cond ((floatp i) (round (* i her-num-bg-shades)))
+		((integerp i) i)
+		(t 0)))
+
 (defun her-fg (&optional i)
-  (let ((i (- (or i 0))))
+  (let* ((i (her--float-fg-bg-index i))
+		 (i (- (or i 0))))
     (her-safe-nth i her-fg-bg-shades)))
 
-										;(her-fg -2)
-										;(her-bg 2)
+										;(her-fg 1.0)
+										;(her-bg 1.0)
 
 (defun her-bg (&optional i)
-  (let* ((i (- (or i 0)))
+  (let* ((i (her--float-fg-bg-index i))
+		 (i (- i))
          (j (- (length her-fg-bg-shades) 1 i)))
     (her-safe-nth j her-fg-bg-shades)))
 
