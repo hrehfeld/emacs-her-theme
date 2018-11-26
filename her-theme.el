@@ -1,6 +1,6 @@
 ;;; her-theme.el --- her theme
 
-;; Copyright (C) 2017 Hauke Rehfeld
+;; Copyright (C) 2017-2018 Hauke Rehfeld
 
 ;; Author: Hauke Rehfeld
 ;; URL: https://github.com/hrehfeld/emacs-her-theme
