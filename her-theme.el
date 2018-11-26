@@ -540,6 +540,20 @@
 	 (org-scheduled-today ((t (:inherit (org-scheduled)))))
 	 (org-scheduled-previously ((t (:inherit (org-scheduled org-warning)))))
 
+	 (org-habit-face ((t (:inherit (fixed-pitch) :inverse-video t))))
+	 (org-habit-ready-face ((t (:inherit (org-habit-face) :background ,(her-success 1.0 0.3) :foreground ,(her-success nil 0.75) :box t))))
+	 (org-habit-ready-future-face ((t (:inherit (org-habit-face)
+												:foreground ,(her-neutral nil 0.75)))))
+	 (org-habit-overdue-face ((t (:inherit (org-habit-face org-warning)
+										   :foreground ,(her-error nil 0.75)
+										   :background ,(her-error nil 0.5)
+										   ))))
+	 (org-habit-overdue-future-face ((t (:inherit (org-habit-face) :foreground ,(her-warning nil 0.75)))))
+	 (org-habit-clear-face ((t (:inherit (org-habit-face) :foreground ,(her-success nil 0.75)))))
+	 (org-habit-clear-future-face ((t (:inherit (org-habit-face) :foreground ,(her-success nil 0.75)))))
+	 (org-habit-alert-face ((t (:inherit (org-habit-face org-warning) :foreground ,(her-warning nil 0.75)))))
+	 (org-habit-alert-future-face ((t (:inherit (org-habit-alert-face org-warning)))))
+
 	 ;;git
 	 ;;(git-commit-comment-file ((t (:inherit fixed-pitch))))
 	 (git-commit-pseudo-header ((t (:inherit fixed-pitch))))
