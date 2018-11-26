@@ -340,7 +340,6 @@
        (her-error-face (list :foreground (her-red)))
        (her-neutral-face (list :foreground (her-neutral)))
        )
-
   (apply
    'custom-theme-set-faces
    `(her
