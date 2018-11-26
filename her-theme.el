@@ -96,7 +96,8 @@
 		 (mapcar (lambda (h) (her-wrap h 0.0 1.1))
 				 (let* ((from (/ -5 360))
 						(to (+ 1 from)))
-				   (-slice (number-sequence from to (/ (- to from) (float her-num-colors))) 0 -1)))
+				   (-slice (number-sequence from to (/ (- to from) (float her-num-colors)))
+						   0 -1)))
 		 )))
 
 (setq her-red 0)
