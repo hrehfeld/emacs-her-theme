@@ -376,7 +376,7 @@
      ;; ;;; custom faces
      ;;      `(linum ((t (:foreground "#505050" :background ,theme-bg-less1 :weight normal))))
      ;;      `(tooltip ((t (:foreground ,theme-bg :background ,theme-fg))))
-     ;;                                      ;`(fixed-pitch ((t (:family "Anka/Coder" :height 75))))
+	 (fixed-pitch ((t (:inherit default))))
      ;;                                      ;`(variable-pitch ((t (:family "Helvetica Neue LT Std"))))
 
      ;;  ;;; whitespace
