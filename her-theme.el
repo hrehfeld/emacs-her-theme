@@ -100,25 +100,34 @@
 						   0 -1)))
 		 )))
 
-(setq her-red 0)
-(setq her-yellow 1)
-(setq her-lightgreen 2)
-(setq her-green 3)
-(setq her-cyan 4)
-(setq her-blue 5)
-(setq her-purple 6)
-(setq her-pink 7)
+(setq her-color-names
+	  (-map-indexed
+	   (lambda (i sym) (set sym i) (cons sym i))
+	   '(her-red
+		 her-yellow
+		 her-lightgreen
+		 her-green
+		 her-cyan
+		 her-blue
+		 her-purple
+		 her-pink
+		 )))
 
-(setq her-color-names (list
-                       her-cyan
-                       her-pink
-                       her-green
-                       her-purple
-                       her-lightgreen
-                       her-blue
-                       her-red
-                       her-yellow
-                       ))
+;;semantic color names
+(setq her-semantic-names
+	  `((her-primary . ,her-cyan)
+		(her-secondary . ,her-blue)
+		(her-tertiary . ,her-green)
+		(her-contrast . ,her-purple)
+		(her-contrast-large . ,her-purple)
+		(her-contrast-text . ,her-blue)
+		(her-alternative . ,her-pink)
+		(her-alternative-large . ,her-pink)
+		(her-error . ,her-red)
+		(her-success . ,her-green)
+		(her-warning . ,her-yellow)
+		(her-neutral . ,her-blue)))
+
 										;(setq her-colors (mapcar (lambda (i) (nth i her-colors)) her-color-names))
 										;(setq her-colors (mapcar (lambda (i) (nth i her-colors)) (number-sequence 0 (- (length her-color-names) 1))))
 
@@ -132,21 +141,6 @@
 										;(setq her-pink (-elem-index her-pink her-color-names))
 
 
-;;semantic color names
-(setq
- her-primary her-cyan
- her-secondary her-blue
- her-tertiary her-green
- her-contrast her-purple
- her-contrast-large her-purple
- her-contrast-text her-blue
- her-alternative her-pink
- her-alternative-large her-pink
- her-error her-red
- her-success her-green
- her-warning her-yellow
- her-neutral her-blue
- )
 
 
 (defun her--min-diff (x a b)
@@ -259,43 +253,48 @@
   (let ((i (min i (- (length l) 1))))
     (nth i l)))
 
-(defun her-color-shade (shades isat_ ival_)
-  (let* ((isat (+  (/ her-shade-sat-steps 2) isat_))
-		 (ival (+ (/ her-num-lightness-steps 2) ival_))
-		 (col (nth ival (nth isat shades))))
-	(unless col (user-error "Wrong color index: %s %s" isat_ ival_))
-	col
-	))
+(defun her-color-shade (shades isat ival)
+  (let* ((isat (her--float-index (if (numberp isat) isat 0.5) (length shades)))
+		 (values (nth isat shades))
+         (ival (her--float-index (if (numberp ival) ival 0.5) (length values)))
+		 (col (nth ival values)))
+	(message (number-to-string isat))
+	(message (number-to-string ival))
+	col))
 
-;;(her-color-shade (nth 0 her-color-shades) 0 0)
-;;(her-safe-nth 0 (nth 0 (nth her-num-lightness-steps her-color-shades)))
+;;(her-color-shade (nth her-contrast-large her-color-shades) nil nil)
+;;(her-color-shade (nth her-contrast-large her-color-shades) 0.0 0.0)
+;;(her-color-shade (nth her-contrast-large her-color-shades) 0.5 0.0)
+;;(her-color-shade (nth her-contrast-large her-color-shades) 0.5 1.0)
 
-(defun her--float-fg-bg-index (i)
-  (cond ((floatp i) (round (* i her-num-bg-shades)))
+(defun her--float-index (i n)
+  (cond ((floatp i) (max (min (round (* i (float n))) (- n 1)) 0))
 		((integerp i) i)
 		(t 0)))
 
 (defun her-fg (&optional i)
-  (let* ((i (her--float-fg-bg-index i))
-		 (i (- (or i 0))))
-    (her-safe-nth i her-fg-bg-shades)))
+    (let* ((n (length her-fg-bg-shades))
+		 (i (her--float-index i n)))
+	  (nth i her-fg-bg-shades)))
 
+										;(her-fg)
+										;(her-fg 0.5)
 										;(her-fg 1.0)
-										;(her-bg 1.0)
 
 (defun her-bg (&optional i)
-  (let* ((i (her--float-fg-bg-index i))
-		 (i (- i))
-         (j (- (length her-fg-bg-shades) 1 i)))
-    (her-safe-nth j her-fg-bg-shades)))
+  (let* ((n (length her-fg-bg-shades))
+		 (i (her--float-index i n)))
+	(nth (- n 1 i) her-fg-bg-shades)))
+;;(her-bg)
+;;(her-bg 0.5)
+;;(her-bg 1.0)
 
 
 
 (defun her-color (c &optional isat ival)
-  (let ((isat (or isat 0))
-        (ival (or ival 0)))
-    (her-color-shade (nth c her-color-shades) isat ival)))
-;;(her-color her-blue 1 1)
+  (her-color-shade (nth c her-color-shades) isat ival))
+;;(her-color her-pink)
+;;(her-color her-pink 0.5 0.5)
 
 (defun her-bg-for (c)
   (let* ((hsl (apply 'color-rgb-to-hsl (color-name-to-rgb c)))
@@ -315,24 +314,31 @@
 
 ;;(her-color her-secondary 4)
 
-(defmacro her--defun-color (name)
-  `(defun ,name (&rest rest) (apply 'her-color (append (list ,name) rest))))
-(her--defun-color her-red)
-(her--defun-color her-yellow)
-(her--defun-color her-lightgreen)
-(her--defun-color her-green)
-(her--defun-color her-cyan)
-(her--defun-color her-blue)
-(her--defun-color her-purple)
-(her--defun-color her-pink)
-;;(her-blue 0 0)
+(defmacro her--defun-color (name value)
+  `(defun ,name (&optional sat val) (her-color ,value sat val)))
+
+;;(her--defun-color 
+
+(defmacro her--defun-color-list (plist)
+  `(progn
+	 ,@(mapcar
+		(lambda (p)
+		  (let* ((name (car p))
+				 (value (cdr p)))
+			(assert (symbolp name))
+			(assert (numberp value))
+			`(her--defun-color ,name ,value)))
+		(eval plist))))
+(her--defun-color-list her-color-names)
+(her--defun-color-list her-semantic-names)
+;;(her-primary 0.5 0.5)
 
 (defvar her-reference-body-size 13)
 (defun her-font-size (n) (/ n (float her-reference-body-size)))
 
 (let* (
-       (her-error-face (list :foreground (her-color her-red)))
-       (her-neutral-face (list :foreground (her-color her-neutral)))
+       (her-error-face (list :foreground (her-red)))
+       (her-neutral-face (list :foreground (her-neutral)))
        )
 
   (apply
@@ -341,20 +347,19 @@
 
     ;;; color-theme mapping
      (default ((t (:background ,(her-bg) :foreground ,(her-fg)))))
-     (cursor ((t (:background  ,(her-color her-secondary)))))
+     (cursor ((t (:background  ,(her-secondary)))))
 
 
 
      (menu ((t (:inherit default))))
-     (minibuffer-prompt ((t (:inherit default ;:foreground ,(her-color her-contrast 0 0)
+     (minibuffer-prompt ((t (:inherit default ;:foreground ,(her-contrast 0.5 0.5)
                                       ))))
-     
-     (mode-line ((t (:inherit default :background ,(her-color her-primary) :inverse-video nil))))
+     (mode-line ((t (:inherit default :background ,(her-primary) :inverse-video nil))))
      (mode-line-highlight ((t (:inherit mode-line :weight bold))))
-     (mode-line-emphasis ((t (:inherit mode-line :background ,(her-color her-primary 0 1
+     (mode-line-emphasis ((t (:inherit mode-line :background ,(her-primary 0.5 0.7
 																		 ) :slant italic))))
      (mode-line-inactive ((t (:inherit mode-line
-									   :background ,(her-color her-primary -1 2)))))
+									   :background ,(her-primary 0.2 0.9)))))
      (mode-line-buffer-id ((t (:weight bold :background nil))))
      (which-func ((t (:inherit mode-line-highlight :inverse-video t :foreground ,(her-bg)))))
      (window-numbering-face ((t (:inherit mode-line-highlight :inverse-video t :box t :foreground ,(her-bg)))))
@@ -366,7 +371,7 @@
      ;;      `(mode-line-mode-name ((t (:foreground ,theme-contrast))))
      ;;      `(mode-line-mode-string ((t (:foreground ,theme-contrast))))
 
-     (region ((t ,(let ((col (her-color her-contrast-large -2 2)))
+     (region ((t ,(let ((col (her-contrast-large 0.2 0.9)))
                     `(:background ,col :distant-foreground ,(her-bg-for col))))))
      ;;      `(secondary-selection ((t (:background ,theme-bg-less1))))
 
@@ -390,35 +395,35 @@
      (window-divider ((t (:background ,(her-fg)))))
      
      ;;border
-     (vertical-border ((t (:foreground ,(her-bg -2)))))
+     (vertical-border ((t (:foreground ,(her-bg 0.9)))))
      (fringe ((t (:inverse-video nil :background ,(her-bg)))))
 										;(lv-separator ((t(:background ,(her-red)))))
-     ,(let* ((bg (her-color her-primary))
+     ,(let* ((bg (her-primary))
 			 (fg (her-bg-for bg)))
 		`(header-line ((t (:inherit variable-pitch
 									:foreground ,fg :background ,bg
 									:box (:line-width 5 :color ,bg))))))
-     (highlight ((t (:inverse-video t :foreground ,(her-color her-contrast)
+     (highlight ((t (:inverse-video t :foreground ,(her-contrast)
 										;:distant-foreground ,(her-bg-for (her-color her-secondary))
                                     ))))
-     (success ((t (:foreground ,(her-color her-success)))))
-     (warning ((t (:foreground ,(her-color her-warning)))))
-     (error ((t (:foreground ,(her-color her-error)))))
-     ;;(table-cell ((t (:foreground ,(her-color her-success)))))
+     (success ((t (:foreground ,(her-success)))))
+     (warning ((t (:foreground ,(her-warning)))))
+     (error ((t (:foreground ,(her-error)))))
+     ;;(table-cell ((t (:foreground ,(her-success)))))
 
-     ,(let* ((bg (her-yellow 0 2))
+     ,(let* ((bg (her-yellow 0.5 0.9))
 			 (fg (her-bg-for bg)))
         `(tool-tip ((t (:foreground ,fg :background ,bg)))))
 
      
 
-     ,(let* ((bg (her-bg -1))
+     ,(let* ((bg (her-bg 0.1))
 			 (fg (her-bg-for bg)))
 		`(hl-line ((t (:background ,bg :distant-foreground ,fg )))))
 
 
      ;;      `(trailing-whitespace ((t (:underline t :foreground ,theme-red))))
-     ,(let ((col (her-color her-alternative-large 0 2)))
+     ,(let ((col (her-alternative-large 0.5 0.9)))
         `(show-paren-match ((t (:background ,col :distant-foreground ,(her-bg-for col))))))
      (show-paren-mismatch ((t (:inherit error :inverse-video t))))
 
@@ -430,16 +435,16 @@
 
      ;;      ;; faces used by isearch
      ,@(let ((icol her-success))
-		 `((isearch ((t (:inverse-video t :foreground ,(her-color icol) :background ,(her-fg)))))
-		   (lazy-highlight ((t (:inherit isearch :foreground ,(her-color icol -2 2) :background ,(her-fg)))))))
-     (match ((t (:inverse-video t :foreground ,(her-color her-neutral -2)))))
+		 `((isearch ((t (:inverse-video t :foreground ,(her-color icol) :background ,(her-bg)))))
+		   (lazy-highlight ((t (:inherit isearch :foreground ,(her-color icol 0.1 1.0) :background ,(her-fg)))))))
+     (match ((t (:inverse-video t :foreground ,(her-neutral 0.2)))))
      (isearch-fail ((t (,@her-error-face :inverse-video t))))
 
      ;;phisearch
      (phi-search-selection-face ((t (:inherit isearch))))
      (phi-search-match-face ((t (:inherit lazy-highlight))))
      (phi-search-failpart-face ((t (:inherit isearch-fail))))
-     (phi-replace-preview-face ((t (:box t :foreground ,(her-color her-success)))))
+     (phi-replace-preview-face ((t (:box t :foreground ,(her-success)))))
 
 
      ;;basic text
@@ -448,7 +453,7 @@
      (glyphless-char ((t (:inherit font-lock-constant-face :box t))))
 
      (link ((t (:underline t :foreground ,(her-blue)))))
-     (link-visited ((t (:inherit link :foreground ,(her-blue -2)))))
+     (link-visited ((t (:inherit link :foreground ,(her-blue 0.24)))))
 
 	 ;; :box (:line-width 5 :color ,(her-bg))										  
      ,@(let* ((outline-face `(:weight bold :box (:line-width 5 :color ,(her-bg))))
@@ -470,18 +475,18 @@
 								  :foreground ,(her-red) :weight normal  :slant italic
 											  ))))
      (font-lock-comment-delimiter-face ((t (:foreground ,(her-fg -.5)))))
-     (font-lock-constant-face ((t (:foreground ,(her-cyan -1)))))
-     (font-lock-doc-face ((t (:inherit font-lock-comment-face :foreground ,(her-pink 1)))))
-     (font-lock-doc-string-face ((t (:inherit font-lock-doc-face :foreground ,(her-pink 2)))))
-     (font-lock-function-name-face ((t (:foreground ,(her-blue 1) :weight bold))))
-     (font-lock-builtin-face ((t (:foreground ,(her-pink 1)))))
-     (font-lock-keyword-face ((t (:foreground ,(her-pink 2)))))
-     (font-lock-string-face ((t (:foreground ,(her-red -2)))))
-     (font-lock-type-face ((t (:foreground ,(her-green 1 -1)))))
-     (font-lock-variable-name-face ((t (:foreground ,(her-yellow 1)))))
+     (font-lock-constant-face ((t (:foreground ,(her-cyan 0.25)))))
+     (font-lock-doc-face ((t (:inherit font-lock-comment-face :foreground ,(her-pink 0.75)))))
+     (font-lock-doc-string-face ((t (:inherit font-lock-doc-face :foreground ,(her-pink 1.0)))))
+     (font-lock-function-name-face ((t (:foreground ,(her-blue 0.75) :weight bold))))
+     (font-lock-builtin-face ((t (:foreground ,(her-pink 0.75)))))
+     (font-lock-keyword-face ((t (:foreground ,(her-pink 1.0)))))
+     (font-lock-string-face ((t (:foreground ,(her-red 0.25)))))
+     (font-lock-type-face ((t (:foreground ,(her-green 0.75 0.25)))))
+     (font-lock-variable-name-face ((t (:foreground ,(her-yellow 0.75)))))
      (font-lock-warning-face ((t (;,@theme-warning-face
 								  ,(her-yellow)))))
-     (font-lock-preprocessor-face ((t (:foreground ,(her-cyan 1 -1)))))
+     (font-lock-preprocessor-face ((t (:foreground ,(her-cyan 0.75 0.25)))))
      (font-lock-negation-char-face ((t ())))
 
 	 ;;calendar
@@ -513,30 +518,30 @@
 
 	 ;;TODO flycheck
 
-     (hl-todo ((t (:inherit fixed-pitch :foreground ,(her-color her-error) :inverse t))))
+     (hl-todo ((t (:inherit fixed-pitch :foreground ,(her-error) :inverse t))))
 
 	 
 	 
      ;;org-mode
 
      (org-hide ((t (:foreground ,(her-bg) :inherit fixed-pitch))))
-	 (org-special-keyword ((t (:inherit (fixed-pitch font-lock-comment-delimiter-face)))))
-     (org-table ((t (:inherit fixed-pitch :foreground ,(her-color her-contrast-text)))))
-     (org-tag ((t (:inherit org-special-keyword :background ,(her-bg -1) :height ,(her-font-size 10)))))
+	 (org-special-keyword ((t (:inherit (fixed-pitch font-lock-comment-delimiter-face) :foreground ,(her-fg 0.65)))))
+     (org-table ((t (:inherit fixed-pitch :foreground ,(her-contrast-text)))))
+     (org-tag ((t (:inherit org-special-keyword :height ,(her-font-size 10)))))
      (org-date ((t (:inherit org-table))))
      (org-checkbox ((t (:inherit (fixed-pitch)))))
-     (org-agenda-date ((t (:inherit (variable-pitch outline-3) :inverse-video t :height ,(her-font-size 20) ))))
-	 (org-agenda-calendar-event ((t (:inherit variable-pitch))))
+     (org-agenda-date ((t (:inherit (calendar-weekday-header variable-pitch) :inverse-video t ))))
+     (org-agenda-date-weekend ((t (:inherit (calendar-weekend-header org-agenda-date) :inverse-video t))))
+	 (org-agenda-calendar-event ((t (:inherit variable-pitch :weight bold :slant italic))))
 	 (org-upcoming-deadline ((t (:inherit (org-warning variable-pitch) ))))
+	 (org-scheduled ((t (:inherit fixed-pitch :foreground ,(her-fg)))))
 	 ;;for habits
-	 (org-scheduled ((t (:inherit variable-pitch ,@ her-neutral-face))))
-	 (org-scheduled-today ((t (:inherit (fixed-pitch) ,@ her-neutral-face))))
+	 (org-scheduled-today ((t (:inherit (org-scheduled)))))
 	 (org-scheduled-previously ((t (:inherit (org-scheduled org-warning)))))
 
 	 ;;git
 	 ;;(git-commit-comment-file ((t (:inherit fixed-pitch))))
 	 (git-commit-pseudo-header ((t (:inherit fixed-pitch))))
-
      )))
 
 ;;;###autoload
