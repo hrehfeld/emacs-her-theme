@@ -66,8 +66,8 @@
 (setq her-fg "#000000")
 (setq her-bg "#ffffff")
 (setq her-num-bg-shades 8)
-(setq her-num-lightness-steps 5
-      her-shade-sat-steps 5
+(setq her-num-lightness-steps 16
+      her-shade-sat-steps 16
       her-shade-lightness-sat-mul 1.0
       her-shade-sat-mul-step 0.7
       )
