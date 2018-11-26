@@ -486,11 +486,37 @@
 
 	 ;;calendar
 	 (diary ((t (:inherit font-lock-builtin-face))))
+	 ;; TODO calendar-today  
+	 ;;calendar-weekday-header
+	 ;;calendar-weekend-header
 
-     
+	 ;;TODO company
+
+	 ;;TODO diff
+	 ;;diff-added          
+	 ;;diff-changed                
+	 ;;diff-context                
+	 ;;diff-file-header         
+	 ;;diff-function                
+	 ;;diff-header                
+	 ;;diff-hunk-header         
+	 ;;diff-index                
+	 ;;diff-indicator-added          
+	 ;;diff-indicator-changed        
+	 ;;diff-indicator-removed        
+	 ;;diff-nonexistent                
+	 ;;diff-refine-added          
+	 ;;diff-refine-changed        
+	 ;;diff-refine-removed        
+	 ;;diff-removed        
+
+
+	 ;;TODO flycheck
 
      (hl-todo ((t (:inherit fixed-pitch :foreground ,(her-color her-error) :inverse t))))
 
+	 
+	 
      ;;org-mode
 
      (org-hide ((t (:foreground ,(her-bg) :inherit fixed-pitch))))
