@@ -484,6 +484,10 @@
      (font-lock-preprocessor-face ((t (:foreground ,(her-cyan 1 -1)))))
      (font-lock-negation-char-face ((t ())))
 
+	 ;;calendar
+	 (diary ((t (:inherit font-lock-builtin-face))))
+
+     
      ;;org-mode
 
      (org-hide ((t (:foreground ,(her-bg) :inherit fixed-pitch))))
