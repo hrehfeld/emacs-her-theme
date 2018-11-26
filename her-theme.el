@@ -132,7 +132,7 @@
 										;(setq her-pink (-elem-index her-pink her-color-names))
 
 
-;;special color names
+;;semantic color names
 (setq
  her-primary her-cyan
  her-secondary her-blue
