@@ -488,6 +488,9 @@
 	 (diary ((t (:inherit font-lock-builtin-face))))
 
      
+
+     (hl-todo ((t (:inherit fixed-pitch :foreground ,(her-color her-error) :inverse t))))
+
      ;;org-mode
 
      (org-hide ((t (:foreground ,(her-bg) :inherit fixed-pitch))))
