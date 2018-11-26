@@ -346,6 +346,7 @@
    `(her
 
     ;;; color-theme mapping
+	 ;; somehow breaks fixed pitch in variable-pitch-mode
 	 ;;(fixed-pitch ((t ())))
      (default ((t (:background ,(her-bg) :foreground ,(her-fg)))))
      (cursor ((t (:background  ,(her-secondary)))))
