@@ -467,13 +467,13 @@
       ;;; font lock
      (font-lock-builtin-face ((t (:foreground ,(her-pink)))))
      (font-lock-comment-face ((t (;,@theme-text-like-face
-								  :foreground ,(her-red) :weight normal
+								  :foreground ,(her-red) :weight normal  :slant italic
 											  ))))
-     (font-lock-comment-delimiter-face ((t (:foreground ,(her-red)))))
+     (font-lock-comment-delimiter-face ((t (:foreground ,(her-fg -1.0)))))
      (font-lock-constant-face ((t (:foreground ,(her-cyan -1)))))
-     (font-lock-doc-face ((t (:foreground ,(her-pink 1)))))
-     (font-lock-doc-string-face ((t (:foreground ,(her-pink 2)))))
-     (font-lock-function-name-face ((t (:foreground ,(her-blue 1)))))
+     (font-lock-doc-face ((t (:inherit font-lock-comment-face :foreground ,(her-pink 1)))))
+     (font-lock-doc-string-face ((t (:inherit font-lock-doc-face :foreground ,(her-pink 2)))))
+     (font-lock-function-name-face ((t (:foreground ,(her-blue 1) :weight bold))))
      (font-lock-builtin-face ((t (:foreground ,(her-pink 1)))))
      (font-lock-keyword-face ((t (:foreground ,(her-pink 2)))))
      (font-lock-string-face ((t (:foreground ,(her-red -2)))))
