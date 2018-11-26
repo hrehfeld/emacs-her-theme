@@ -469,7 +469,7 @@
      (font-lock-comment-face ((t (;,@theme-text-like-face
 								  :foreground ,(her-red) :weight normal  :slant italic
 											  ))))
-     (font-lock-comment-delimiter-face ((t (:foreground ,(her-fg -1.0)))))
+     (font-lock-comment-delimiter-face ((t (:foreground ,(her-fg -.5)))))
      (font-lock-constant-face ((t (:foreground ,(her-cyan -1)))))
      (font-lock-doc-face ((t (:inherit font-lock-comment-face :foreground ,(her-pink 1)))))
      (font-lock-doc-string-face ((t (:inherit font-lock-doc-face :foreground ,(her-pink 2)))))
