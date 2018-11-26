@@ -75,14 +75,28 @@
 ;;for faces that should not deviate too much from standard
 ;; be careful with these, they're against the point of everything above
 
-(setq her-colors
+(defun her-wrap (x min max)
+  (let ((range (- max min)))
+	(while (< x min)
+	  (setq x (+ x range)))
+	(while (> x max)
+	  (setq x (- x range)))
+	x))
+
+(setq
+ her-num-colors 8
+ her-colors
 	  ;;max saturated
       (let ((s 0.7)
 			;;avg lightness
             (l 0.4))
 		(mapcar
-		 (lambda (h) (apply 'color-rgb-to-hex (color-hsl-to-rgb h s l)))
-		 (mapcar (lambda (h) (/ h 360.0)) (number-sequence -5 350 45))
+		 (lambda (h)
+		   (apply 'color-rgb-to-hex (color-hsl-to-rgb h s l)))
+		 (mapcar (lambda (h) (her-wrap h 0.0 1.1))
+				 (let* ((from (/ -5 360))
+						(to (+ 1 from)))
+				   (-slice (number-sequence from to (/ (- to from) (float her-num-colors))) 0 -1)))
 		 )))
 
 (setq her-red 0)
