@@ -430,8 +430,8 @@
 
      ;;      ;; faces used by isearch
      ,@(let ((icol her-success))
-		 `((isearch ((t (:inverse-video t :foreground ,(her-color icol)))))
-		   (lazy-highlight ((t (:inherit isearch :foreground ,(her-color icol -2 2)))))))
+		 `((isearch ((t (:inverse-video t :foreground ,(her-color icol) :background ,(her-fg)))))
+		   (lazy-highlight ((t (:inherit isearch :foreground ,(her-color icol -2 2) :background ,(her-fg)))))))
      (match ((t (:inverse-video t :foreground ,(her-color her-neutral -2)))))
      (isearch-fail ((t (,@her-error-face :inverse-video t))))
 
