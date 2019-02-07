@@ -403,7 +403,7 @@
 		`(header-line ((t (:inherit variable-pitch
 									:foreground ,fg :background ,bg
 									:box (:line-width 5 :color ,bg))))))
-     (highlight ((t (:inverse-video t :foreground ,(her-contrast)
+     (highlight ((t (:inverse-video nil ;:background ,(her-contrast 0.75 1.0)
 										;:distant-foreground ,(her-bg-for (her-color her-secondary))
                                     ))))
      (success ((t (:foreground ,(her-success)))))
