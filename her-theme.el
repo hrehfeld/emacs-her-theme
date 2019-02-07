@@ -469,6 +469,16 @@
 		   (outline-7 ((t (,@outline-face :foreground ,(her-color 6)))))
 		   (outline-8 ((t (,@outline-face :foreground ,(her-color 7)))))))
 
+	 (rainbow-delimiters-depth-1-face ((t (:inherit outline-1))))
+	 (rainbow-delimiters-depth-2-face ((t (:inherit outline-2))))
+	 (rainbow-delimiters-depth-3-face ((t (:inherit outline-3))))
+	 (rainbow-delimiters-depth-4-face ((t (:inherit outline-4))))
+	 (rainbow-delimiters-depth-5-face ((t (:inherit outline-5))))
+	 (rainbow-delimiters-depth-6-face ((t (:inherit outline-6))))
+	 (rainbow-delimiters-depth-7-face ((t (:inherit outline-7))))
+	 (rainbow-delimiters-depth-8-face ((t (:inherit outline-8))))
+	 (rainbow-delimiters-depth-9 ((t (:inherit outline-9))))
+
       ;;; font lock
      (font-lock-builtin-face ((t (:foreground ,(her-pink)))))
      (font-lock-comment-face ((t (;,@theme-text-like-face
