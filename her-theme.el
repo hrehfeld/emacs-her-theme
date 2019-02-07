@@ -530,8 +530,6 @@
 
      (hl-todo ((t (:inherit fixed-pitch :foreground ,(her-error) :inverse t))))
 
-	 
-	 
      ;;org-mode
 
      (org-hide ((t (:foreground ,(her-bg) :inherit fixed-pitch))))
