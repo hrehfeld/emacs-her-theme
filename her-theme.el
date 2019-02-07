@@ -463,9 +463,9 @@
      (link-visited ((t (:inherit link :foreground ,(her-blue 0.24)))))
 
 	 (her-theme-hierarchy-1-face ((t (:foreground ,(her-fg)))))
-	 (her-theme-hierarchy-2-face ((t (:foreground ,(her-color 1)))))
-	 (her-theme-hierarchy-3-face ((t (:foreground ,(her-color 2)))))
-	 (her-theme-hierarchy-4-face ((t (:foreground ,(her-color 3)))))
+	 (her-theme-hierarchy-2-face ((t (:foreground ,(her-color 3)))))
+	 (her-theme-hierarchy-3-face ((t (:foreground ,(her-color 1)))))
+	 (her-theme-hierarchy-4-face ((t (:foreground ,(her-color 2)))))
 	 (her-theme-hierarchy-5-face ((t (:foreground ,(her-color 4)))))
 	 (her-theme-hierarchy-6-face ((t (:foreground ,(her-color 5)))))
 	 (her-theme-hierarchy-7-face ((t (:foreground ,(her-color 6)))))
