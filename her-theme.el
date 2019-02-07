@@ -258,8 +258,6 @@
 		 (values (nth isat shades))
          (ival (her--float-index (if (numberp ival) ival 0.5) (length values)))
 		 (col (nth ival values)))
-	(message (number-to-string isat))
-	(message (number-to-string ival))
 	col))
 
 ;;(her-color-shade (nth her-contrast-large her-color-shades) nil nil)
