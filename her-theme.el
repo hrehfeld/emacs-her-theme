@@ -310,8 +310,6 @@
       dark
       )))
 
-;;(her-color her-secondary 4)
-
 (defmacro her--defun-color (name value)
   `(defun ,name (&optional sat val) (her-color ,value sat val)))
 
