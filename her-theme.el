@@ -1,10 +1,10 @@
 ;;; her-theme.el --- her theme
 
-;; Copyright (C) 2017-2018 Hauke Rehfeld
+;; Copyright (C) 2017-2019 Hauke Rehfeld
 
 ;; Author: Hauke Rehfeld
 ;; URL: https://github.com/hrehfeld/emacs-her-theme
-;; Version: 0.02
+;; Version: 0.03
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
