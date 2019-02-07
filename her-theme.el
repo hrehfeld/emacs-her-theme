@@ -547,7 +547,7 @@
 
 	 ;;TODO flycheck
 
-     (hl-todo ((t (:inherit fixed-pitch :foreground ,(her-error) :inverse t))))
+     (hl-todo ((t (:inherit fixed-pitch :foreground ,(her-error) :inverse-video t))))
 
      ;;org-mode
 
