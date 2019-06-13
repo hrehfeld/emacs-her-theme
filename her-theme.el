@@ -376,13 +376,13 @@
 
 
      ,@(let* ((outline-face `(:box (:line-width 5 :color ,(her-bg))))
-              (subheading-size (her-font-size 15)))
-       `((outline-1 ((t (,@outline-face :foreground ,(her-fg) :height ,(her-font-size 24) :box (:line-width 5 :color ,(her-bg))))))
-         (outline-2 ((t (,@outline-face :foreground ,(her-color 1) :height ,subheading-size))))
-         (outline-3 ((t (,@outline-face :foreground ,(her-color 2) :height ,subheading-size))))
-         (outline-4 ((t (,@outline-face :foreground ,(her-color 3) :height ,subheading-size))))
-         (outline-5 ((t (,@outline-face :foreground ,(her-color 4) :height ,subheading-size))))
-         (outline-6 ((t (,@outline-face :foreground ,(her-color 5) :height ,subheading-size))))
+              (subheading-size 15))
+       `((outline-1 ((t (,@outline-face :foreground ,(her-fg) :height ,(her-font-size 16) :box (:line-width 5 :color ,(her-bg))))))
+         (outline-2 ((t (,@outline-face :foreground ,(her-color 1) :height ,(her-font-size subheading-size)))))
+         (outline-3 ((t (,@outline-face :foreground ,(her-color 2) :height ,(her-font-size (- subheading-size 1))))))
+         (outline-4 ((t (,@outline-face :foreground ,(her-color 3) :height ,(her-font-size (- subheading-size 2))))))
+         (outline-5 ((t (,@outline-face :foreground ,(her-color 4) :height ,(her-font-size (- subheading-size 3))))))
+         (outline-6 ((t (,@outline-face :foreground ,(her-color 5) :height ,(her-font-size (- subheading-size 4))))))
          (outline-7 ((t (,@outline-face :foreground ,(her-color 6) ))))
          (outline-8 ((t (,@outline-face :foreground ,(her-color 7) ))))))
      
