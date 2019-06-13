@@ -423,6 +423,11 @@
 
      (highlight-symbol-face ((t (:background ,(her-cyan -3 4)))))
 
+	 (lsp-face-highlight-read ((t (:inherit highlight-symbol-face))))
+	 (lsp-face-highlight-textual ((t (:inherit font-lock-string-face :slant italic))))
+	 (lsp-face-highlight-write ((t (:inherit highlight-symbol-face :slant italic))))
+
+
      )))
 
 ;;;###autoload
