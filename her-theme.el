@@ -387,7 +387,6 @@
          (outline-8 ((t (,@outline-face :foreground ,(her-color 7) ))))))
      
       ;;; font lock
-     (font-lock-builtin-face ((t (:foreground ,(her-pink)))))
      (font-lock-comment-face ((t (;,@theme-text-like-face
                                    :foreground ,(her-red) :weight normal
                                                ))))
