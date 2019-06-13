@@ -421,6 +421,9 @@
 	 (org-scheduled-today ((t (:inherit (fixed-pitch) ,@ her-neutral-face))))
 	 (org-scheduled-previously ((t (:inherit (org-scheduled org-warning)))))
      
+
+     (highlight-symbol-face ((t (:background ,(her-cyan -3 4)))))
+
      )))
 
 ;;;###autoload
