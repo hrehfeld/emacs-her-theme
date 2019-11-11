@@ -332,15 +332,15 @@
 (defvar her-reference-body-size 13)
 (defun her-font-size (n) (/ n (float her-reference-body-size)))
 
-(defface her-theme-hierarchy-1-face '((t (:foreground ,(her-fg)))) "Base for hierarchical faces 1")
-(defface her-theme-hierarchy-2-face '((t (:foreground ,(her-color 1)))) "Base for hierarchical faces 2")
-(defface her-theme-hierarchy-3-face '((t (:foreground ,(her-color 2)))) "Base for hierarchical faces 3")
-(defface her-theme-hierarchy-4-face '((t (:foreground ,(her-color 3)))) "Base for hierarchical faces 4")
-(defface her-theme-hierarchy-5-face '((t (:foreground ,(her-color 4)))) "Base for hierarchical faces 5")
-(defface her-theme-hierarchy-6-face '((t (:foreground ,(her-color 5)))) "Base for hierarchical faces 6")
-(defface her-theme-hierarchy-7-face '((t (:foreground ,(her-color 6)))) "Base for hierarchical faces 7")
-(defface her-theme-hierarchy-8-face '((t (:foreground ,(her-color 7)))) "Base for hierarchical faces 8")
-(defface her-theme-hierarchy-9-face '((t (:foreground ,(her-color 8)))) "Base for hierarchical faces 9")
+(defface her-theme-hierarchy-1-face `((t (:foreground ,(her-fg)))) "Base for hierarchical faces 1")
+(defface her-theme-hierarchy-2-face `((t (:foreground ,(her-color 1)))) "Base for hierarchical faces 2")
+(defface her-theme-hierarchy-3-face `((t (:foreground ,(her-color 2)))) "Base for hierarchical faces 3")
+(defface her-theme-hierarchy-4-face `((t (:foreground ,(her-color 3)))) "Base for hierarchical faces 4")
+(defface her-theme-hierarchy-5-face `((t (:foreground ,(her-color 4)))) "Base for hierarchical faces 5")
+(defface her-theme-hierarchy-6-face `((t (:foreground ,(her-color 5)))) "Base for hierarchical faces 6")
+(defface her-theme-hierarchy-7-face `((t (:foreground ,(her-color 6)))) "Base for hierarchical faces 7")
+(defface her-theme-hierarchy-8-face `((t (:foreground ,(her-color 7)))) "Base for hierarchical faces 8")
+(defface her-theme-hierarchy-9-face `((t (:foreground ,(her-color 8)))) "Base for hierarchical faces 9")
 
 
 (let* (
