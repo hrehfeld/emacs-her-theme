@@ -344,7 +344,7 @@
 
 
 (let* (
-       (her-error-face (list :foreground (her-red)))
+       (her-error-face (list :foreground (her-error)))
        (her-neutral-face (list :foreground (her-neutral)))
        )
   (apply
