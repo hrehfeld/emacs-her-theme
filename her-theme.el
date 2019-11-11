@@ -579,6 +579,7 @@
 	 (org-habit-clear-future-face ((t (:inherit (org-habit-face) :foreground ,(her-success nil 0.75)))))
 	 (org-habit-alert-face ((t (:inherit (org-habit-face org-warning) :foreground ,(her-warning nil 0.75)))))
 	 (org-habit-alert-future-face ((t (:inherit (org-habit-alert-face org-warning)))))
+	 (org-block ((t (:inherit fixed-pitch))))
 
 	 ;;git
 	 ;;(git-commit-comment-file ((t (:inherit fixed-pitch))))
