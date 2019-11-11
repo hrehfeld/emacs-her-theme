@@ -75,30 +75,31 @@
 ;;for faces that should not deviate too much from standard
 ;; be careful with these, they're against the point of everything above
 
+;; (her-wrap -58 -20 10)
+;; (her-wrap2 -58 -20 10)
 (defun her-wrap (x min max)
-  (let ((range (- max min)))
-	(while (< x min)
-	  (setq x (+ x range)))
-	(while (> x max)
-	  (setq x (- x range)))
-	x))
+  (+ (mod (- x min) (- max min)) min))
+
 
 (setq
  her-num-colors 8
  her-colors
 	  ;;max saturated
-      (let ((s 0.7)
+      (let* ((s 0.7)
 			;;avg lightness
-            (l 0.4))
-		(mapcar
-		 (lambda (h)
-		   (apply 'color-rgb-to-hex (color-hsl-to-rgb h s l)))
-		 (mapcar (lambda (h) (her-wrap h 0.0 1.1))
-				 (let* ((from (/ -5 360))
-						(to (+ 1 from)))
-				   (-slice (number-sequence from to (/ (- to from) (float her-num-colors)))
-						   0 -1)))
-		 )))
+            (l 0.4)
+			(colorwheel-relative-start 1.05)
+			(colorwheel-relative-end (+ colorwheel-relative-start 1)))
+		(cl-flet ((hsl-to-hex (h) (apply 'color-rgb-to-hex (color-hsl-to-rgb h s l)))
+				  (wrap (h) (her-wrap h 0.0 1.0)))
+		  (mapcar
+		   (lambda (x) (hsl-to-hex (wrap x)))
+		   (let* ((from colorwheel-relative-start)
+				  (to colorwheel-relative-end)
+				  (range (- to from))
+				  (inc  (/ range (float her-num-colors))))
+			 (-butlast (number-sequence from to inc)))
+		   ))))
 
 (setq her-color-names
 	  (-map-indexed
