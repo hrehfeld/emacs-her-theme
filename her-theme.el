@@ -603,4 +603,8 @@
 
 (provide-theme 'her)
 
+;; Local Variables:
+;; eval: (when (fboundp 'rainbow-mode) (rainbow-mode 1))
+;; End:
+
 ;;; her-theme.el ends here
