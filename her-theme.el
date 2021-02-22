@@ -555,6 +555,7 @@
 
      (org-hide ((t (:foreground ,(her-bg) :inherit fixed-pitch))))
 	 (org-special-keyword ((t (:inherit (fixed-pitch font-lock-comment-delimiter-face) :foreground ,(her-fg 0.65)))))
+	 (org-drawer ((t (:foreground ,(her-fg 0.65) :inherit fixed-pitch ))))
      (org-table ((t (:inherit fixed-pitch :foreground ,(her-contrast-text)))))
      (org-tag ((t (:inherit org-special-keyword :height ,(her-font-size 10)))))
      (org-date ((t (:inherit org-drawer))))
