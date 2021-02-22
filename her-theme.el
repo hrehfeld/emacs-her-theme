@@ -500,6 +500,7 @@
 	 (rainbow-delimiters-unmatched-face ((t (:inherit (rainbow-delimiters-base-face show-paren-mismatch)))))
 
       ;;; font lock
+	 ;; TODO: inherit from fixed-pitch?
      (font-lock-comment-face ((t (;,@theme-text-like-face
 								  :foreground ,(her-red) :weight normal  :slant italic
 											  ))))
