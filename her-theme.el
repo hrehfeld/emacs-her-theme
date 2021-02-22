@@ -547,6 +547,8 @@
 
 	 ;;TODO flycheck
 
+	 (fixed-pitch-serif ((t (:family "Monospace Serif" :inherit fixed-pitch))))
+
      (hl-todo ((t (:inherit fixed-pitch :foreground ,(her-error) :inverse-video t))))
 
      ;;org-mode
