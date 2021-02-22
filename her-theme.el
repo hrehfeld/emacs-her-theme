@@ -393,11 +393,11 @@
      ;;                                      ;`(variable-pitch ((t (:family "Helvetica Neue LT Std"))))
 
      ;;  ;;; whitespace
-     ;;      `(whitespace-space ((t (:foreground ,theme-bg-less1))))
-     ;;      `(whitespace-tab ((t (:foreground ,theme-bg-less1))))
-     ;;      `(whitespace-trailing ((t (:background ,theme-yellow :weight bold))))
-     ;;      `(whitespace-newline ((t (:foreground ,theme-bg-less1))))
-     ;;      `(whitespace-empty ((t (:foreground ,theme-fg :background ,theme-bg))))
+     ;;(whitespace-space ((t (:background ,(her-bg 0.1)))))
+     (whitespace-tab ((t (:foreground ,(her-bg 0.3) :background ,(her-bg 0.1)))))
+     (whitespace-trailing ((t (:underline (:color ,(her-error) :style wave)))))
+     (whitespace-line ((t (:inherit whitespace-trailing))))
+     ;;(whitespace-empty ((t (:foreground ,theme-fg :background ,theme-bg))))
 
      ;; ;;; basic coloring
      (window-divider ((t (:background ,(her-fg)))))
